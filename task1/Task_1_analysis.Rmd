@@ -1,0 +1,23 @@
+---
+title: "Task 1"
+author: "Gleb V"
+date: "20/07/2020"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE, code = readLines("task1_decathlon_data.R")}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+#### Task 1 analysis answers
+
+1. The longest long jump was performed by: CLAY, who recorded a 7.96 meters long jump. 
+```{r, echo=FALSE}
+long_jump
+```
+
+2. 
+
