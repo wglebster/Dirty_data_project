@@ -19,5 +19,9 @@ knitr::opts_chunk$set(echo = FALSE)
 long_jump
 ```
 
-2. 
+2. Average time for Decastar and OlympicG competitions was as follows: 
+```{r, echo=FALSE}
+avg_100m_both
+```
+
 

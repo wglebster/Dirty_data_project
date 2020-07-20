@@ -6,6 +6,8 @@ decathlon_data <- read_rds("data/decathlon.rds") %>% #read in data
                names_to = "sport", # put all competition names to variable "sport"
                values_to = "result")  %>% #put all competitions results to variable "result"
   mutate(athlete_name = toupper(athlete_name)) # for consistency mutate all names to uppercase
+
+view(decathlon_data)
  
 #find longest long jump
 long_jump <- decathlon_data %>%
@@ -13,7 +15,14 @@ long_jump <- decathlon_data %>%
  arrange(desc(result)) %>%
  select(athlete_name, result) %>%
  head(1)
-   
-   
-long_jump
+
+#find average time in 100m for each competition
+avg_100m_both <- decathlon_data %>%
+  filter(sport == "100m") %>%
+  group_by(competition) %>%
+  summarise(cometition = unique(competition), 
+            average_result = mean(result)) %>%
+  select(competition, average_result)
+
+avg_100m_both
 
