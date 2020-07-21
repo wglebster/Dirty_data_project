@@ -9,34 +9,83 @@ output:
 ---
 
 ```{r setup, include=FALSE,}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, message = FALSE)
+library(tidyverse)
 library(here)
 ```
 
 
-#### Task 1 analysis answers
+# Task 1.
 
-1. The longest long jump was performed by: CLAY, who recorded a 7.96 meters long jump. 
-```{r, eval=FALSE}
+## Answer 1.
+
+```{r}
 long_jump <- read_csv(here::here("clean_data/clean_decathlon_data.csv")) %>%
  filter(sport == "long_jump") %>%
  arrange(desc(result)) %>%
  select(athlete_name, result) %>%
  head(1)
-
 long_jump
 ```
+The longest long jump was performed by: `r long_jump` meters.
 
-2. Average time for Decastar and OlympicG competitions was as follows: 
-```{r, eval=FALSE}
+## Answer 2.
+
+Average time for 100m across Decastar and OlympicG competitions was as follows:
+```{r}
 avg_100m_both <- read_csv(here::here("clean_data/clean_decathlon_data.csv")) %>%
   filter(sport == "100m") %>%
   group_by(competition) %>%
   summarise(cometition = unique(competition), 
-            average_result = mean(result)) %>%
+            average_result = round(mean(result),2)) %>%
   select(competition, average_result)
-
 avg_100m_both
 ```
 
+
+## Answer 3. 
+
+```{r}
+#find the Athlete with highest total points across Decastar and OlympicG competitions. 
+
+highest_total_points <- read_csv(here::here("clean_data/clean_decathlon_data.csv")) %>%
+  group_by(athlete_name, competition) %>%
+  summarise(unique(competition), points = sum(points)/10) %>%
+  mutate(athlete_name, 
+         competition = unique(competition), 
+         total_competition_points = sum(points))%>%
+  select(athlete_name, 
+         competition,
+         points,
+         total_competition_points) %>%
+  arrange(desc(total_competition_points)) %>%
+  head(2)
+highest_total_points
+  
+```
+SEBRLE had the highest points total across both competitions. Comined total was 17110 points. 
+
+## Answer 4. 
+
+Below dataframe shows top three shot put competitors in both competitions. 
+```{r}
+#find top three shot put competitors in each competition
+decastar_shot_put <- read_csv(here::here("clean_data/clean_decathlon_data.csv")) %>%
+  filter(sport == "shot_put", competition == "Decastar") %>% 
+  select(athlete_name, competition, sport, result) %>%
+  group_by(athlete_name) %>%
+  summarize(athlete_name, competition, sport, result) %>%
+  arrange(desc(result)) %>%
+  head(3)
+
+olyg_shot_put <- read_csv(here::here("clean_data/clean_decathlon_data.csv")) %>%
+  filter(sport == "shot_put", competition == "OlympicG") %>% 
+  select(athlete_name, competition, sport, result) %>%
+  group_by(athlete_name) %>%
+  summarize(athlete_name, competition, sport, result) %>%
+  arrange(desc(result)) %>%
+  head(3)
+
+bind_rows(decastar_shot_put, olyg_shot_put)
+```
 

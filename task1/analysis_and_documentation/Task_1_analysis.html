@@ -1516,12 +1516,93 @@ div.tocify {
 </div>
 
 
-<div id="task-1-analysis-answers" class="section level4">
-<h4>Task 1 analysis answers</h4>
-<ol style="list-style-type: decimal">
-<li><p>The longest long jump was performed by: CLAY, who recorded a 7.96 meters long jump.</p></li>
-<li><p>Average time for Decastar and OlympicG competitions was as follows:</p></li>
-</ol>
+<div id="task-1." class="section level1">
+<h1>Task 1.</h1>
+<div id="answer-1." class="section level2">
+<h2>Answer 1.</h2>
+<pre class="r"><code>long_jump &lt;- read_csv(here::here(&quot;clean_data/clean_decathlon_data.csv&quot;)) %&gt;%
+ filter(sport == &quot;long_jump&quot;) %&gt;%
+ arrange(desc(result)) %&gt;%
+ select(athlete_name, result) %&gt;%
+ head(1)
+long_jump</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   athlete_name result
+##   &lt;chr&gt;         &lt;dbl&gt;
+## 1 CLAY           7.96</code></pre>
+<p>The longest long jump was performed by: CLAY, 7.96 meters.</p>
+</div>
+<div id="answer-2." class="section level2">
+<h2>Answer 2.</h2>
+<p>Average time for 100m across Decastar and OlympicG competitions was as follows:</p>
+<pre class="r"><code>avg_100m_both &lt;- read_csv(here::here(&quot;clean_data/clean_decathlon_data.csv&quot;)) %&gt;%
+  filter(sport == &quot;100m&quot;) %&gt;%
+  group_by(competition) %&gt;%
+  summarise(cometition = unique(competition), 
+            average_result = round(mean(result),2)) %&gt;%
+  select(competition, average_result)
+avg_100m_both</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   competition average_result
+##   &lt;chr&gt;                &lt;dbl&gt;
+## 1 Decastar              11.2
+## 2 OlympicG              10.9</code></pre>
+</div>
+<div id="answer-3." class="section level2">
+<h2>Answer 3.</h2>
+<pre class="r"><code>#find the Athlete with highest total points across Decastar and OlympicG competitions. 
+
+highest_total_points &lt;- read_csv(here::here(&quot;clean_data/clean_decathlon_data.csv&quot;)) %&gt;%
+  group_by(athlete_name, competition) %&gt;%
+  summarise(unique(competition), points = sum(points)/10) %&gt;%
+  mutate(athlete_name, 
+         competition = unique(competition), 
+         total_competition_points = sum(points))%&gt;%
+  select(athlete_name, 
+         competition,
+         points,
+         total_competition_points) %&gt;%
+  arrange(desc(total_competition_points)) %&gt;%
+  head(2)
+highest_total_points</code></pre>
+<pre><code>## # A tibble: 2 x 4
+## # Groups:   athlete_name [1]
+##   athlete_name competition points total_competition_points
+##   &lt;chr&gt;        &lt;chr&gt;        &lt;dbl&gt;                    &lt;dbl&gt;
+## 1 SEBRLE       Decastar      8217                    17110
+## 2 SEBRLE       OlympicG      8893                    17110</code></pre>
+<p>SEBRLE had the highest points total across both competitions.</p>
+</div>
+<div id="answer-4." class="section level2">
+<h2>Answer 4.</h2>
+<pre class="r"><code>#find top three shot put competitors in each competition
+decastar_shot_put &lt;- read_csv(here::here(&quot;clean_data/clean_decathlon_data.csv&quot;)) %&gt;%
+  filter(sport == &quot;shot_put&quot;, competition == &quot;Decastar&quot;) %&gt;% 
+  select(athlete_name, competition, sport, result) %&gt;%
+  group_by(athlete_name) %&gt;%
+  summarize(athlete_name, competition, sport, result) %&gt;%
+  arrange(desc(result)) %&gt;%
+  head(3)
+
+olyg_shot_put &lt;- read_csv(here::here(&quot;clean_data/clean_decathlon_data.csv&quot;)) %&gt;%
+  filter(sport == &quot;shot_put&quot;, competition == &quot;OlympicG&quot;) %&gt;% 
+  select(athlete_name, competition, sport, result) %&gt;%
+  group_by(athlete_name) %&gt;%
+  summarize(athlete_name, competition, sport, result) %&gt;%
+  arrange(desc(result)) %&gt;%
+  head(3)
+
+bind_rows(decastar_shot_put, olyg_shot_put)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   athlete_name competition sport    result
+##   &lt;chr&gt;        &lt;chr&gt;       &lt;chr&gt;     &lt;dbl&gt;
+## 1 YURKOV       Decastar    shot_put   15.2
+## 2 SEBRLE       Decastar    shot_put   14.8
+## 3 KARPOV       Decastar    shot_put   14.8
+## 4 SEBRLE       OlympicG    shot_put   16.4
+## 5 KARPOV       OlympicG    shot_put   15.9
+## 6 MACEY        OlympicG    shot_put   15.7</code></pre>
+</div>
 </div>
 
 
