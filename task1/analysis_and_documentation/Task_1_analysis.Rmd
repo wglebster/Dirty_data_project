@@ -8,19 +8,34 @@ output:
     toc_float: true
 ---
 
-```{r setup, include=FALSE, code = readLines("task1_decathlon_data.R")}
+```{r setup, include=FALSE,}
 knitr::opts_chunk$set(echo = FALSE)
+library(here)
 ```
+
 
 #### Task 1 analysis answers
 
 1. The longest long jump was performed by: CLAY, who recorded a 7.96 meters long jump. 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
+long_jump <- read_csv(here::here("clean_data/clean_decathlon_data.csv")) %>%
+ filter(sport == "long_jump") %>%
+ arrange(desc(result)) %>%
+ select(athlete_name, result) %>%
+ head(1)
+
 long_jump
 ```
 
 2. Average time for Decastar and OlympicG competitions was as follows: 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
+avg_100m_both <- read_csv(here::here("clean_data/clean_decathlon_data.csv")) %>%
+  filter(sport == "100m") %>%
+  group_by(competition) %>%
+  summarise(cometition = unique(competition), 
+            average_result = mean(result)) %>%
+  select(competition, average_result)
+
 avg_100m_both
 ```
 
