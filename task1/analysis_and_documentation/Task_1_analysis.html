@@ -1534,7 +1534,6 @@ long_jump</code></pre>
 </div>
 <div id="answer-2." class="section level2">
 <h2>Answer 2.</h2>
-<p>Average time for 100m across Decastar and OlympicG competitions was as follows:</p>
 <pre class="r"><code>avg_100m_both &lt;- read_csv(here::here(&quot;clean_data/clean_decathlon_data.csv&quot;)) %&gt;%
   filter(sport == &quot;100m&quot;) %&gt;%
   group_by(competition) %&gt;%
@@ -1547,6 +1546,7 @@ avg_100m_both</code></pre>
 ##   &lt;chr&gt;                &lt;dbl&gt;
 ## 1 Decastar              11.2
 ## 2 OlympicG              10.9</code></pre>
+<p>Average times for 100m sprint across Decastar and OlympicG competitions displayed above</p>
 </div>
 <div id="answer-3." class="section level2">
 <h2>Answer 3.</h2>
@@ -1571,7 +1571,7 @@ highest_total_points</code></pre>
 ##   &lt;chr&gt;        &lt;chr&gt;        &lt;dbl&gt;                    &lt;dbl&gt;
 ## 1 SEBRLE       Decastar      8217                    17110
 ## 2 SEBRLE       OlympicG      8893                    17110</code></pre>
-<p>SEBRLE had the highest points total across both competitions.</p>
+<p>SEBRLE had the highest points total across both competitions. Comined total was 17110 points.</p>
 </div>
 <div id="answer-4." class="section level2">
 <h2>Answer 4.</h2>
@@ -1602,6 +1602,28 @@ bind_rows(decastar_shot_put, olyg_shot_put)</code></pre>
 ## 4 SEBRLE       OlympicG    shot_put   16.4
 ## 5 KARPOV       OlympicG    shot_put   15.9
 ## 6 MACEY        OlympicG    shot_put   15.7</code></pre>
+<p>Above table shows top three shot put competitors in both competitions.</p>
+</div>
+<div id="answer-5." class="section level2">
+<h2>Answer 5.</h2>
+<pre class="r"><code>#compare average points for competitors who ran 400m in less than 50 sec against those who ran in in more than 50 sec
+
+avg_points_under_50sec_run &lt;- read_csv(here::here(&quot;clean_data/clean_decathlon_data.csv&quot;)) %&gt;%
+  filter(sport == &quot;400m&quot;) %&gt;%
+  mutate(athlete_name, points, under_50 = result &lt; 50) %&gt;%
+  select(athlete_name, points, competition, under_50) %&gt;%
+  group_by(under_50) %&gt;%
+  summarise(unique(under_50), mean_points = round(mean(points), 0)) %&gt;%
+  select(under_50_sec_run = under_50, mean_points) %&gt;%
+  arrange(desc(mean_points))
+
+avg_points_under_50sec_run</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   under_50_sec_run mean_points
+##   &lt;lgl&gt;                  &lt;dbl&gt;
+## 1 TRUE                    8120
+## 2 FALSE                   7727</code></pre>
+<p>As it is shown in the above table, those athletes that ran 400m distance in under 50 seconds, accumulated more total points on average than those athletes that completed the same distance in over 50 seconds.</p>
 </div>
 </div>
 

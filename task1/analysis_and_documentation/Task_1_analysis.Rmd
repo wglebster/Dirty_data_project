@@ -31,7 +31,6 @@ The longest long jump was performed by: `r long_jump` meters.
 
 ## Answer 2.
 
-Average time for 100m across Decastar and OlympicG competitions was as follows:
 ```{r}
 avg_100m_both <- read_csv(here::here("clean_data/clean_decathlon_data.csv")) %>%
   filter(sport == "100m") %>%
@@ -41,7 +40,7 @@ avg_100m_both <- read_csv(here::here("clean_data/clean_decathlon_data.csv")) %>%
   select(competition, average_result)
 avg_100m_both
 ```
-
+Average times for 100m sprint across Decastar and OlympicG competitions displayed above
 
 ## Answer 3. 
 
@@ -67,7 +66,6 @@ SEBRLE had the highest points total across both competitions. Comined total was 
 
 ## Answer 4. 
 
-Below dataframe shows top three shot put competitors in both competitions. 
 ```{r}
 #find top three shot put competitors in each competition
 decastar_shot_put <- read_csv(here::here("clean_data/clean_decathlon_data.csv")) %>%
@@ -88,4 +86,27 @@ olyg_shot_put <- read_csv(here::here("clean_data/clean_decathlon_data.csv")) %>%
 
 bind_rows(decastar_shot_put, olyg_shot_put)
 ```
+Above table shows top three shot put competitors in both competitions.
+
+## Answer 5.
+
+```{r}
+#compare average points for competitors who ran 400m in less than 50 sec against those who ran in in more than 50 sec
+
+avg_points_under_50sec_run <- read_csv(here::here("clean_data/clean_decathlon_data.csv")) %>%
+  filter(sport == "400m") %>%
+  mutate(athlete_name, points, under_50 = result < 50) %>%
+  select(athlete_name, points, competition, under_50) %>%
+  group_by(under_50) %>%
+  summarise(unique(under_50), mean_points = round(mean(points), 0)) %>%
+  select(under_50_sec_run = under_50, mean_points) %>%
+  arrange(desc(mean_points))
+
+avg_points_under_50sec_run
+```
+As it is shown in the above table, those athletes that ran 400m distance in under 50 seconds, accumulated more total points on average than those athletes that completed the same distance in over 50 seconds. 
+
+
+
+
 
