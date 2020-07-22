@@ -110,10 +110,11 @@ location_other <- c("Japan", "france", "A tropical island south of the equator",
 candy_data_combined <- bind_rows(candy_data_2015_clean, 
                                 candy_data_2016_clean, 
                                 candy_data_2017_clean) %>%
-  select(1,2,3,97,98,4:142) %>%
-  select(-20, -40, -43, -99, -101, -116, -138, -142) %>%
+  select(1,2,3,97,98,4:142) %>% #including only columns which contain useful data
+  select(-20, -40, -43, -99, -101, -116, -138, -142) %>% #and candy ratings
   mutate(year = substr(year,1,4), 
-         age = as.integer(age)) %>% 
+         age = as.integer(age)) %>%
+  mutate(age = ifelse(age > 100, "99", age)) %>%
   mutate(country = case_when( # classify countries using above vectors, any country that is not
   #in any of the vectors and is not NA, is classified as US. NA countries classified as UNKNOWN.
     country %in% location_canada ~ "CANADA",
@@ -123,3 +124,6 @@ candy_data_combined <- bind_rows(candy_data_2015_clean,
     TRUE ~ "US")) %>%
 
 write_csv("clean_data/candy_data_combined.csv")
+
+  view(candy_data_combined)
+  
