@@ -70,7 +70,8 @@ candy_data_2017_clean <- read_excel("raw_data/boing-boing-candy-2017.xlsx") %>%
   rename_with(~ gsub("/", "_", .x, fixed = TRUE)) %>%
   rename_with(~ tolower(gsub("going out", "trick_or_treating", .x, fixed = TRUE))) %>%
   rename_with(~ tolower(gsub(" state province county etc", "country", .x, fixed = TRUE))) %>%
-  rename_with(~ tolower(gsub(" ", "_", .x, fixed = TRUE)))
+  rename_with(~ tolower(gsub(" ", "_", .x, fixed = TRUE))) %>%
+  mutate(year = as.Date("2017-01-01")) # add yesr = 2017 variable as 2017 dataset does not contain year variable.
 
 #create_location classification vectors: 
 location_canada <- c("Canada", "québec", "canada", "canada", "canada", "Quebec", "Alberta",
@@ -110,7 +111,7 @@ candy_data_combined <- bind_rows(candy_data_2015_clean,
                                 candy_data_2016_clean, 
                                 candy_data_2017_clean) %>%
   select(1,2,3,97,98,4:142) %>%
-  select( -40, -43, -99, -101, -116, -138, -142) %>%
+  select(-20, -40, -43, -99, -101, -116, -138, -142) %>%
   mutate(year = substr(year,1,4), 
          age = as.integer(age)) %>% 
   mutate(country = case_when( # classify countries using above vectors, any country that is not
@@ -119,6 +120,6 @@ candy_data_combined <- bind_rows(candy_data_2015_clean,
     country %in% location_other ~ "OTHER",
     country %in% location_uk ~ "UK",
     is.na(country) ~ "UNKNOWN", 
-    TRUE ~ "US"
-  )) %>%
+    TRUE ~ "US")) %>%
+
 write_csv("clean_data/candy_data_combined.csv")
