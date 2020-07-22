@@ -1,8 +1,9 @@
 library(readxl)
 library(tidyverse)
 #Based on questions I am keeping the following data: 
-#year, age, trick or treat, all cany bars columns, keep STARBURST, gender.
-#I need to specify following countries: US, Canada, UK, Other. 
+#year, age, gender, trick or treat, all cany bars columns. 
+#I need to specify following countries: US, Canada, UK, Other. I have also specified UNKNOWN for
+#countries which were NA.
 
 candy_data_2015_clean <- read_excel("raw_data/boing-boing-candy-2015.xlsx") %>%
   select(1:96) %>%
@@ -21,11 +22,7 @@ candy_data_2015_clean <- read_excel("raw_data/boing-boing-candy-2015.xlsx") %>%
   rename_with(~ gsub("__", "_", .x, fixed = TRUE)) %>%
   rename(year = timestamp, 
          age = how_old_are_you,
-         trick_or_treating = are_you_going_actually_going_trick_or_treating_yourself) %>%
-  write_csv("clean_data/candy_data_2015_clean.csv")
-
-names(candy_data_2015_clean)
-view(candy_data_2015_clean)
+         trick_or_treating = are_you_going_actually_going_trick_or_treating_yourself)
 
 #cleaning 2016 data
 candy_data_2016_clean <- read_excel("raw_data/boing-boing-candy-2016.xlsx") %>%
@@ -49,12 +46,7 @@ candy_data_2016_clean <- read_excel("raw_data/boing-boing-candy-2016.xlsx") %>%
          age = how_old_are_you,
          trick_or_treating = are_you_going_actually_going_trick_or_treating_yourself,
          gender = your_gender,
-         country = which_country_do_you_live_in) %>%
-   write_csv("clean_data/candy_data_2016_clean.csv")
-
-names(candy_data_2016_clean)
-view(candy_data_2016_clean)
-
+         country = which_country_do_you_live_in)
 
 # cleaning 2017 data
 candy_data_2017_clean <- read_excel("raw_data/boing-boing-candy-2017.xlsx") %>%
@@ -78,13 +70,9 @@ candy_data_2017_clean <- read_excel("raw_data/boing-boing-candy-2017.xlsx") %>%
   rename_with(~ gsub("/", "_", .x, fixed = TRUE)) %>%
   rename_with(~ tolower(gsub("going out", "trick_or_treating", .x, fixed = TRUE))) %>%
   rename_with(~ tolower(gsub(" state province county etc", "country", .x, fixed = TRUE))) %>%
-  rename_with(~ tolower(gsub(" ", "_", .x, fixed = TRUE))) %>%
-  write_csv("clean_data/candy_data_2017_clean.csv")
+  rename_with(~ tolower(gsub(" ", "_", .x, fixed = TRUE)))
 
-names(candy_data_2017_clean)
-view(candy_data_2017_clean)
-
-#stack all tables together
+#create_location classification vectors: 
 location_canada <- c("Canada", "québec", "canada", "canada", "canada", "Quebec", "Alberta",
                     "yukon", "ontario", "Ontario", "va", "vancouver, bc", "British Columbia",
                     "Newfoundland", "newfoundland", "ON", "Saskatchewan", "Manitoba",
@@ -116,29 +104,21 @@ location_other <- c("Japan", "france", "A tropical island south of the equator",
                     "Dublin", "madrid", "Hesse", "Noord-Brabant", "Skane", "Zürich", "NL", "Munster",
                     "Stockholm", "Berlin", "1", "ur mom", "Psychotic")
 
+#stack all tables together
+
 candy_data_combined <- bind_rows(candy_data_2015_clean, 
                                 candy_data_2016_clean, 
                                 candy_data_2017_clean) %>%
   select(1,2,3,97,98,4:142) %>%
   select( -40, -43, -99, -101, -116, -138, -142) %>%
   mutate(year = substr(year,1,4), 
-         age = as.integer(age)) %>%
-  #mutate(country = case_when(
-   # country %in% location_canada ~ "CANADA",
-  #  country %in% location_other ~ "OTHER", 
-   # country %in% location_uk ~ "UK", 
-  #  FALSE ~ country
-  #))
-  mutate(country = case_when(
+         age = as.integer(age)) %>% 
+  mutate(country = case_when( # classify countries using above vectors, any country that is not
+  #in any of the vectors and is not NA, is classified as US. NA countries classified as UNKNOWN.
     country %in% location_canada ~ "CANADA",
     country %in% location_other ~ "OTHER",
     country %in% location_uk ~ "UK",
     is.na(country) ~ "UNKNOWN", 
     TRUE ~ "US"
   )) %>%
-  write_csv("clean_data/candy_data_combined.csv")
-
-
-#unique(candy_data_combined$country)
-
-view(candy_data_combined)
+write_csv("clean_data/candy_data_combined.csv")
