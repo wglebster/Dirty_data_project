@@ -1516,17 +1516,43 @@ div.tocify {
 </div>
 
 
-<p>#Task 4.</p>
+<div id="task-4." class="section level1">
+<h1>Task 4.</h1>
 <div id="answer-1." class="section level2">
 <h2>Answer 1.</h2>
 <ul>
 <li>To calculate how many total rating were submitted I took total number of columns, subtracted 5, as the first 5 columns of the dataset do not contain ratings. I multiplied the result of subtraction by number of rows in the dataset.</li>
 </ul>
 <pre class="r"><code>num_col &lt;- ncol(all_candy_data)-5
-num_row &lt;- nrow(all_candy_data)+0 # result is stored as an Integer without performing an arithmetic
-#operation
+num_row &lt;- nrow(all_candy_data)+0 # result is stored as an Integer without performing an arithmetic operation
 total_ratings = num_col * num_row</code></pre>
 <p>There were total of 1206021 submitted over 3 years.</p>
+</div>
+<div id="answer-2." class="section level2">
+<h2>Answer 2.</h2>
+<ul>
+<li>Average age of people going out/not going out trick or treating was:</li>
+</ul>
+<pre class="r"><code>average_age &lt;- all_candy_data %&gt;%
+  select(age, trick_or_treating) %&gt;%
+  drop_na() %&gt;%
+  group_by(trick_or_treating) %&gt;%
+  summarise(unique(trick_or_treating), average_age = ceiling(mean(age))) %&gt;%
+  mutate(going_out = trick_or_treating, average_age) %&gt;%
+  select(going_out, average_age)
+average_age</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   going_out average_age
+##   &lt;chr&gt;           &lt;dbl&gt;
+## 1 No                 39
+## 2 Yes                34</code></pre>
+</div>
+<div id="answer-3." class="section level2">
+<h2>Answer 3.</h2>
+<ul>
+<li>The following candies received the most “joy”, “meh” and “despair” ratings.</li>
+</ul>
+</div>
 </div>
 
 

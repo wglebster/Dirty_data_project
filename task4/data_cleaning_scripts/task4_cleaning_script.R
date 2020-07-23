@@ -114,7 +114,9 @@ candy_data_combined <- bind_rows(candy_data_2015_clean,
   select(-20, -40, -43, -99, -101, -116, -138, -142) %>% #and candy ratings
   mutate(year = substr(year,1,4), 
          age = as.integer(age)) %>%
-  mutate(age = ifelse(age > 100, "99", age)) %>%
+  mutate(age = ifelse(age > 100, "99", age)) %>% #Some strange numbers in this column,
+  #I overwritten 99 for any age which was over 100, I have not imputed any NA values, as there is 
+  #sufficient data in our dataset for it to be representative of overall population.
   mutate(country = case_when( # classify countries using above vectors, any country that is not
   #in any of the vectors and is not NA, is classified as US. NA countries classified as UNKNOWN.
     country %in% location_canada ~ "CANADA",
@@ -125,5 +127,5 @@ candy_data_combined <- bind_rows(candy_data_2015_clean,
 
 write_csv("clean_data/candy_data_combined.csv")
 
-  view(candy_data_combined)
+  
   

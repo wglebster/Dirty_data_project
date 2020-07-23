@@ -7,10 +7,10 @@ output:
     toc: true
     toc_float: true
 ---
-#Task 4.
+# Task 4.
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
 library(tidyverse)
 library(here)
 all_candy_data <- read_csv(here::here("/clean_data/candy_data_combined.csv"))
@@ -21,14 +21,13 @@ all_candy_data <- read_csv(here::here("/clean_data/candy_data_combined.csv"))
 * To calculate how many total rating were submitted I took total number of columns, subtracted 5, as the first 5 columns of the dataset do not contain ratings. I multiplied the result of subtraction by number of rows in the dataset. 
 ```{r}
 num_col <- ncol(all_candy_data)-5
-num_row <- nrow(all_candy_data)+0 # result is stored as an Integer without performing an arithmetic
-#operation
+num_row <- nrow(all_candy_data)+0 # result is stored as an Integer without performing an arithmetic operation
 total_ratings = num_col * num_row
 ```
 There were total of `r as.integer(total_ratings)` submitted over 3 years.
 
 ## Answer 2. 
-Average age of people going out/not going out trick or treating was:
+* Average age of people going out/not going out trick or treating was:
 ```{r}
 average_age <- all_candy_data %>%
   select(age, trick_or_treating) %>%
@@ -40,4 +39,7 @@ average_age <- all_candy_data %>%
 average_age
 ```
 
+## Answer 3. 
+
+* The following candies received the most "joy", "meh" and "despair" ratings.
 
