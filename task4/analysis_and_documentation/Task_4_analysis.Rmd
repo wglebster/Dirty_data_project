@@ -13,7 +13,9 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message = FALSE)
 library(tidyverse)
 library(here)
-all_candy_data <- read_csv(here::here("/clean_data/candy_data_combined.csv"))
+all_candy_data <- read_csv(here::here("clean_data/candy_data_combined.csv"), 
+                           guess_max = 9349)
+view(all_candy_data)
 ```
 
 ## Answer 1.
@@ -31,13 +33,15 @@ There were total of `r as.integer(total_ratings)` submitted over 3 years.
 ```{r}
 average_age <- all_candy_data %>%
   select(age, trick_or_treating) %>%
-  drop_na() %>%
+  drop_na() %>% #I dropped NA values without imputing, as the dataset is large enough to be representative of the general population. 
   group_by(trick_or_treating) %>%
   summarise(unique(trick_or_treating), average_age = ceiling(mean(age))) %>%
   mutate(going_out = trick_or_treating, average_age) %>%
   select(going_out, average_age)
 average_age
+
 ```
+Average age of people going out trick or treating was 34. Average age of those not going out was 39.
 
 ## Answer 3. 
 
@@ -87,10 +91,83 @@ Personally, I agree with the general sentiment of the survey - lollipos are... w
 
 Having analysed this dataset, I went to read about trick or treating in general. Turns out it is a thing to get glow sticks for halloween, the problem arises when they break. Click [here](https://chicago.cbslocal.com/2013/10/30/glow-sticks-top-worry-for-parents-calling-poison-control-on-halloween/) to read more.
 
+It looks like quite a lot of respondents are trying to overcome their M&M's addiction by abstaining from them. The struggle is so real, that they couldn't even provide rating.
 
 ## Answer 4. 
 ```{r}
+#number of "DESPAIR" ratings for starburst.
+
+starburst_despair <- ratings_count %>%
+  filter(candy_name == "starburst", candy_rating == "DESPAIR") %>% 
+  arrange(desc(number_of_ratings_received))
+starburst_despair
+```
+A total of `r starburst_despair$number_of_ratings_received` people rated Starburst as "DESPAIR"
+
+</br>
+</br>
+
+#### Count despair as -1, joy as +1 and meh as 0.
+* I created a new dataframe called `numeric_ratings` before performing analysis for Q6, Q7 & Q8.
+```{r}
+numeric_ratings <- all_candy_data %>%
+  pivot_longer(cols = "butterfinger":"sandwich_sized_bags_filled_with_booberry_crunch",
+               names_to = "candy_name", 
+               values_to = "candy_rating") %>%
+  mutate(candy_rating = ifelse(is.na(candy_rating), "UNRATED", candy_rating)) %>%
+  mutate(numeric_rating = case_when(
+    candy_rating == "DESPAIR" ~ -1,
+    candy_rating == "JOY" ~ +1,
+    candy_rating == "MEH" ~ 0, 
+    TRUE ~ 0
+    ))
+```
+I treated all NA values as "UNRATED" and counted them as 0, therefore they do not affect the overall rating. 
+
+## Answer 6.
+
+The most popular candy using the above rating system for each gender. 
+
+* To answer this question I treat numeric score as indication of popularity.
+```{r}
+#find the most popular candy by gender "Female" 
+most_pop_by_gender_f <- numeric_ratings %>%
+  filter(gender == "Female") %>%
+  group_by(candy_name) %>%
+  summarise(numeric_rating = sum(numeric_rating)) %>%
+  mutate(gender = "Female", candy_name, numeric_rating) %>%
+  arrange(desc(numeric_rating)) %>%
+  head(1)
+
+#find most popular candy by gender "Male"
+most_pop_by_gender_m <- numeric_ratings %>%
+  filter(gender == "Male") %>%
+  group_by(candy_name) %>%
+  summarise(numeric_rating = sum(numeric_rating)) %>%
+  mutate(gender = "Male", candy_name, numeric_rating) %>%
+  arrange(desc(numeric_rating)) %>%
+  head(1)
+
+#find most popular candy by NA gender = "Undisclosed"
+most_pop_by_gender_u <- numeric_ratings %>%
+  mutate(gender = ifelse(gender != "Female" & 
+                         gender != "Male" |
+                         is.na(gender), "Undisclosed", gender)) %>%
+  filter(gender == "Undisclosed") %>%
+  group_by(candy_name) %>%
+  summarise(numeric_rating = sum(numeric_rating)) %>%
+  mutate(gender = "Undisclosed", candy_name, numeric_rating) %>%
+  arrange(desc(numeric_rating)) %>%
+  head(1)
+
+#combine all three in a single dataframe for easier readability.
+most_pop_by_gender <- bind_rows(most_pop_by_gender_f, 
+                                most_pop_by_gender_m, 
+                                most_pop_by_gender_u) %>%
+  select(gender, candy_name, numeric_rating)
+
+most_pop_by_gender
 
 ```
-
+* As before, Full Sized Candy Bars are the most popular amongst everyone and this preference does not seem to depend on the gender.
 

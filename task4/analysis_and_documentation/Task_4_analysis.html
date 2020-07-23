@@ -1535,7 +1535,7 @@ total_ratings = num_col * num_row</code></pre>
 </ul>
 <pre class="r"><code>average_age &lt;- all_candy_data %&gt;%
   select(age, trick_or_treating) %&gt;%
-  drop_na() %&gt;%
+  drop_na() %&gt;% #I dropped NA values without imputing, as the dataset is large enough to be representative of the general population. 
   group_by(trick_or_treating) %&gt;%
   summarise(unique(trick_or_treating), average_age = ceiling(mean(age))) %&gt;%
   mutate(going_out = trick_or_treating, average_age) %&gt;%
@@ -1546,6 +1546,7 @@ average_age</code></pre>
 ##   &lt;chr&gt;           &lt;dbl&gt;
 ## 1 No                 39
 ## 2 Yes                34</code></pre>
+<p>Average age of people going out trick or treating was 34. Average age of those not going out was 39.</p>
 </div>
 <div id="answer-3." class="section level2">
 <h2>Answer 3.</h2>
@@ -1596,10 +1597,103 @@ top_ratings</code></pre>
 ## 1 any_full_sized_candy_bar JOY                                7589
 ## 2 lollipops                MEH                                1570
 ## 3 broken_glow_stick        DESPAIR                            7905
-## 4 abstained_from_m&amp;ming    UNRATED                            9349</code></pre>
+## 4 third_party_m&amp;m_s        UNRATED                            8162</code></pre>
 <p>According to the survey, respondents were the most exited about getting a “proper size” candy, regardless of its brand or flavour.</p>
 <p>Personally, I agree with the general sentiment of the survey - lollipos are… well… “meh”.</p>
 <p>Having analysed this dataset, I went to read about trick or treating in general. Turns out it is a thing to get glow sticks for halloween, the problem arises when they break. Click <a href="https://chicago.cbslocal.com/2013/10/30/glow-sticks-top-worry-for-parents-calling-poison-control-on-halloween/">here</a> to read more.</p>
+<p>It looks like quite a lot of respondents are trying to overcome their M&amp;M’s addiction by abstaining from them. The struggle is so real, that they couldn’t even provide rating.</p>
+</div>
+<div id="answer-4." class="section level2">
+<h2>Answer 4.</h2>
+<pre class="r"><code>#number of &quot;DESPAIR&quot; ratings for starburst.
+
+starburst_despair &lt;- ratings_count %&gt;%
+  filter(candy_name == &quot;starburst&quot;, candy_rating == &quot;DESPAIR&quot;) %&gt;% 
+  arrange(desc(number_of_ratings_received))
+starburst_despair</code></pre>
+<pre><code>## # A tibble: 1 x 3
+## # Groups:   candy_name [1]
+##   candy_name candy_rating number_of_ratings_received
+##   &lt;chr&gt;      &lt;chr&gt;                             &lt;int&gt;
+## 1 starburst  DESPAIR                            1990</code></pre>
+<p>A total of 1990 people rated Starburst as “DESPAIR”</p>
+<p></br> </br></p>
+<div id="count-despair-as--1-joy-as-1-and-meh-as-0." class="section level4">
+<h4>Count despair as -1, joy as +1 and meh as 0.</h4>
+<ul>
+<li>I created a new dataframe called <code>numeric_ratings</code> before proceeding with further analysis.</li>
+</ul>
+<pre class="r"><code>numeric_ratings &lt;- all_candy_data %&gt;%
+  pivot_longer(cols = &quot;butterfinger&quot;:&quot;sandwich_sized_bags_filled_with_booberry_crunch&quot;,
+               names_to = &quot;candy_name&quot;, 
+               values_to = &quot;candy_rating&quot;) %&gt;%
+  mutate(candy_rating = ifelse(is.na(candy_rating), &quot;UNRATED&quot;, candy_rating)) %&gt;%
+  mutate(numeric_rating = case_when(
+    candy_rating == &quot;DESPAIR&quot; ~ -1,
+    candy_rating == &quot;JOY&quot; ~ +1,
+    candy_rating == &quot;MEH&quot; ~ 0, 
+    TRUE ~ 0
+    ))
+  # select(candy_name, numeric_rating) %&gt;%
+  # group_by(candy_name) %&gt;%
+  # summarise(sum(numeric_rating))
+
+#total 129 candies</code></pre>
+<p>I treated all NA values as “UNRATED” and counted them as 0, therefore they do not affect the overall rating.</p>
+<div id="most-popular-candy-by-the-above-rating-system-for-each-gender." class="section level5">
+<h5>Most popular candy by the above rating system for each gender.</h5>
+<ul>
+<li>To answer this question I treat numeric score as indication of popularity.</li>
+</ul>
+<pre class="r"><code>#find the most popular candy by gender &quot;Female&quot; 
+most_pop_by_gender_f &lt;- numeric_ratings %&gt;%
+  filter(gender == &quot;Female&quot;) %&gt;%
+  group_by(candy_name) %&gt;%
+  summarise(numeric_rating = sum(numeric_rating)) %&gt;%
+  mutate(gender = &quot;Female&quot;, candy_name, numeric_rating) %&gt;%
+  arrange(desc(numeric_rating)) %&gt;%
+  head(1)
+
+#find most popular candy by gender &quot;Male&quot;
+most_pop_by_gender_m &lt;- numeric_ratings %&gt;%
+  select(gender, candy_name, numeric_rating) %&gt;%
+  #mutate(gender = ifelse(is.na(gender), &quot;UNDISCLOSED&quot;, gender)) %&gt;%
+  filter(gender == &quot;Male&quot;) %&gt;%
+  group_by(candy_name) %&gt;%
+  summarise(numeric_rating = sum(numeric_rating)) %&gt;%
+  mutate(gender = &quot;Male&quot;, candy_name, numeric_rating) %&gt;%
+  arrange(desc(numeric_rating)) %&gt;%
+  head(1)
+
+#find most popular candy by NA gender = &quot;Undisclosed&quot;
+most_pop_by_gender_u &lt;- numeric_ratings %&gt;%
+  mutate(gender = ifelse(gender != &quot;Female&quot; &amp; 
+                         gender != &quot;Male&quot; |
+                         is.na(gender), &quot;Undisclosed&quot;, gender)) %&gt;%
+  filter(gender == &quot;Undisclosed&quot;) %&gt;%
+  group_by(candy_name) %&gt;%
+  summarise(numeric_rating = sum(numeric_rating)) %&gt;%
+  mutate(gender = &quot;Undisclosed&quot;, candy_name, numeric_rating) %&gt;%
+  arrange(desc(numeric_rating)) %&gt;%
+  head(1)
+
+most_pop_by_gender &lt;- bind_rows(most_pop_by_gender_f, 
+                                most_pop_by_gender_m, 
+                                most_pop_by_gender_u) %&gt;%
+  select(gender, candy_name, numeric_rating)
+
+most_pop_by_gender</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   gender      candy_name               numeric_rating
+##   &lt;chr&gt;       &lt;chr&gt;                             &lt;dbl&gt;
+## 1 Female      any_full_sized_candy_bar            875
+## 2 Male        any_full_sized_candy_bar           1584
+## 3 Undisclosed any_full_sized_candy_bar           4723</code></pre>
+<ul>
+<li>As before, Full Sized Candy Bars are the most popular amongst everyone and this preference does not depend on gender.</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 
