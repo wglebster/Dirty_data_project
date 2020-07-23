@@ -6,10 +6,4 @@ To complete this Project I cleaned two quite messy datasets.
 I also analysed the output data according to the Project brief.
 This project was performed in R language, mostly using Tidyverse package.
 
-The tasks are numbered Task 1 and Task 4.
-
-Links:
-
-[Task_1](https://github.com/wglebster/Dirty_data_project/tree/master/task1)
-
-[Task_4](https://github.com/wglebster/Dirty_data_project/tree/master/task4)
+The tasks are numbered [Task 1](https://github.com/wglebster/Dirty_data_project/tree/master/task1) and [Task 4](https://github.com/wglebster/Dirty_data_project/tree/master/task4).
