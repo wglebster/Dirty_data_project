@@ -42,4 +42,55 @@ average_age
 ## Answer 3. 
 
 * The following candies received the most "joy", "meh" and "despair" ratings.
+```{r}
+#count total of each rating for each candy
+ratings_count <- all_candy_data %>% 
+  pivot_longer(cols = "butterfinger":"sandwich_sized_bags_filled_with_booberry_crunch",
+               names_to = "candy_name", 
+               values_to = "candy_rating") %>%
+  mutate(candy_rating = ifelse(is.na(candy_rating), "UNRATED", candy_rating)) %>% # replace NA ratings with chr "UNRATED"
+  group_by(candy_name, candy_rating) %>%
+  summarise(number_of_ratings_received = n())
+
+#find candy rated top for "JOY"
+top_joy <- ratings_count %>%
+  filter(candy_rating == "JOY") %>% 
+  arrange(desc(number_of_ratings_received)) %>%
+  head(1)
+
+#find candy rated top for "MEH"
+top_meh <- ratings_count %>%
+  filter(candy_rating == "MEH") %>% 
+  arrange(desc(number_of_ratings_received)) %>%
+  head(1)
+
+#find candy rated top for "DESPAIR"
+top_despair <- ratings_count %>%
+  filter(candy_rating == "DESPAIR") %>% 
+  arrange(desc(number_of_ratings_received)) %>%
+  head(1)
+
+#find top UNRATED candy
+top_unrated <- ratings_count %>%
+  filter(candy_rating == "UNRATED") %>% 
+  arrange(desc(number_of_ratings_received)) %>%
+  head(1)
+
+#show all top candies in a single dataframe
+top_ratings <- bind_rows(top_joy, top_meh, top_despair, top_unrated)
+
+top_ratings
+```
+According to the survey, respondents were the most exited about getting a "proper size" candy, regardless of its brand or flavour. 
+
+Personally, I agree with the general sentiment of the survey - lollipos are... well... "meh".
+
+Having analysed this dataset, I went to read about trick or treating in general. Turns out it is a thing to get glow sticks for halloween, the problem arises when they break. Click [here](https://chicago.cbslocal.com/2013/10/30/glow-sticks-top-worry-for-parents-calling-poison-control-on-halloween/) to read more.
+
+
+## Answer 4. 
+```{r}
+
+```
+
 
