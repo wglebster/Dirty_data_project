@@ -169,5 +169,52 @@ most_pop_by_gender <- bind_rows(most_pop_by_gender_f,
 most_pop_by_gender
 
 ```
-* As before, Full Sized Candy Bars are the most popular amongst everyone and this preference does not seem to depend on the gender.
+As before, Full Sized Candy Bars are the most popular amongst everyone and this preference does not seem to depend on the gender.
+
+## Answer 7. 
+
+The most popular candy on numeric rating scale each year. 
+* To answer this question I am using the dataframe `numeric_ratings` I created previously, as it is already in long format, which is more convenient for analysis than wide format.
+```{r}
+#find the most popular candy in 2015
+most_pop_2015 <- numeric_ratings %>%
+  select(year, candy_name, numeric_rating) %>%
+  filter(year == "2015") %>%
+  group_by(candy_name) %>%
+  summarise(numeric_rating = sum(numeric_rating)) %>%
+  mutate(year = "2015", candy_name, numeric_rating) %>%
+  arrange(desc(numeric_rating)) %>%
+  head(1)
+most_pop_2015
+
+#find the most polular candy in 2016
+most_pop_2016 <- numeric_ratings %>%
+  select(year, candy_name, numeric_rating) %>%
+  filter(year == "2016") %>%
+  group_by(candy_name) %>%
+  summarise(numeric_rating = sum(numeric_rating)) %>%
+  mutate(year = "2016", candy_name, numeric_rating) %>%
+  arrange(desc(numeric_rating)) %>%
+  head(1)
+most_pop_2016
+
+#find the most polular candy in 2017
+most_pop_2017 <- numeric_ratings %>%
+  select(year, candy_name, numeric_rating) %>%
+  filter(year == "2017") %>%
+  group_by(candy_name) %>%
+  summarise(numeric_rating = sum(numeric_rating)) %>%
+  mutate(year = "2017", candy_name, numeric_rating) %>%
+  arrange(desc(numeric_rating)) %>%
+  head(1)
+most_pop_2017
+
+#combine all three dataframes in a single dataframe for easier readability.
+most_pop_by_year <- bind_rows(most_pop_2015, 
+                              most_pop_2016, 
+                              most_pop_2017) %>%
+  select(year, candy_name, numeric_rating)
+most_pop_by_year
+```
+
 
