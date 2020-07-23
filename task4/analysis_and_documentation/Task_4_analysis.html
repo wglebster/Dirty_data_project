@@ -1518,6 +1518,21 @@ div.tocify {
 
 <div id="task-4." class="section level1">
 <h1>Task 4.</h1>
+<div id="overview" class="section level4">
+<h4>Overview:</h4>
+<p>This was an untidy dataset. It consisted of three <code>.xlsx</code> files with mismatched columns. Each file had collection of data representing one year. The data was from a survey, which was about candy prerences. This dataset consisted of variables of <code>charachter</code> type variables. Only the first two variables: <code>year</code> and <code>age</code> were represented as numeric types.</p>
+<ul>
+<li><p>Variable <code>year</code> was missing from file representing year 2017. This data was critical for the analysis I was asked to perform. I have inserted this data manually. As the dataset was about “candy”, I have removed any variables, which did not resemble candy, e.g. “Cash” or seasons of “Person of Interest” and “Desperate Housewives”.</p></li>
+<li><p>Names of variables in different files were mismatched, but represented same data, e.g whether or not someone was going out trick or treating. I consolidated these data under singular variables <code>trick_or_treating</code>, <code>age</code> and <code>country</code>.</p></li>
+<li><p>The variable <code>country</code> contained very disorganised data. For my analysis I only needed to know if a country was US or CANADA or UK or OTHER. I created three vectors (dictionaries), which I used to classify the countries into required catecories. Some information in the variable <code>countries</code>was missing. I created a category UNKNOWN for missing data in this variable.</p></li>
+<li><p>Variable <code>age</code> contained some entries, wich were clearly inaccurate, i.e. entries over 100 years old and a few entries over 1000.</p></li>
+</ul>
+<p>I assumed that even though unlikely, but not impossible that someone aged 99 would go trick or treating (possibly with their grandchildren). For this reason I overwritten variable <code>age</code> with 99 for any number which was over 99.</p>
+<p>I also renamed <code>timestamp</code> to <code>year</code>, as I only needed to keep the year, instead of the full date.</p>
+<ul>
+<li>I renamed all variables in consistent format in lowercase with <code>_</code> separating the words of the same variable.</li>
+</ul>
+</div>
 <div id="answer-1." class="section level2">
 <h2>Answer 1.</h2>
 <ul>

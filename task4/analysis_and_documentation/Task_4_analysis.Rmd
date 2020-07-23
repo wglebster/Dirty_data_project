@@ -7,16 +7,34 @@ output:
     toc: true
     toc_float: true
 ---
-# Task 4.
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE)
 library(tidyverse)
 library(here)
 all_candy_data <- read_csv(here::here("clean_data/candy_data_combined.csv"), 
                            guess_max = 9349)
-view(all_candy_data)
 ```
+# Task 4.
+
+#### Overview:
+
+This was an untidy dataset. It consisted of three `.xlsx` files with mismatched columns. Each file had collection of data representing one year. The data was from a survey, which was about candy prerences. This dataset consisted of variables of `charachter` type variables. Only the first two variables: `year` and `age` were represented as numeric types. 
+
+* Variable `year` was missing from file representing year 2017. This data was critical for the analysis I was asked to perform. I have inserted this data manually. 
+As the dataset was about "candy", I have removed any variables, which did not resemble candy, e.g. "Cash" or seasons of "Person of Interest" and "Desperate Housewives". 
+
+* Names of variables in different files were mismatched, but represented same data, e.g whether or not someone was going out trick or treating. I consolidated these data under singular variables `trick_or_treating`, `age` and `country`.
+
+* The variable `country` contained very disorganised data. For my analysis I only needed to know if a country was US or CANADA or UK or OTHER. I created three vectors (dictionaries), which I used to classify the countries into required catecories. 
+Some information in the variable `countries`was missing. I created a category UNKNOWN for missing data in this variable. 
+
+* Variable `age` contained some entries, wich were clearly inaccurate, i.e. entries over 100 years old and a few entries over 1000. 
+
+I assumed that even though unlikely, but not impossible that someone aged 99 would go trick or treating (possibly with their grandchildren). For this reason I overwritten variable `age` with 99 for any number which was over 99. 
+
+I also renamed `timestamp` to `year`, as I only needed to keep the year, instead of the full date.
+
+* I renamed all variables in consistent format in lowercase with `_` separating the words of the same variable. 
 
 ## Answer 1.
 

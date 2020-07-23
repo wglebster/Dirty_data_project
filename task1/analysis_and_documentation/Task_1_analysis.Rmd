@@ -17,6 +17,23 @@ library(here)
 
 # Task 1.
 
+#### Overview:
+
+This dataset is a collection of data from a Decathlon competition. 
+
+The original file is in `.rds` format. 
+This dataset was relatively tidy to start with. It did not contain any missing data, therefore I did not have to make any assumptions or impute any data manually. 
+
+I performed following operations to clean up this dataset: 
+
+* Changed row names to variable and named it `athlete_name`. 
+
+* Changed all variable names to lowercase and changed all `.`charachters to `_`. 
+
+* Originally data was recorded in wide format, I have pivoted it to long format to make it easier to perform analysis.
+
+* I also changed all of the first column data to UPPERCASE. 
+
 ## Answer 1.
 
 ```{r}
