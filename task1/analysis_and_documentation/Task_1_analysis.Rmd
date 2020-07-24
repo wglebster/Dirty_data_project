@@ -112,11 +112,9 @@ Above table shows top three shot put competitors in both competitions.
 
 avg_points_under_50sec_run <- read_csv(here::here("clean_data/clean_decathlon_data.csv")) %>%
   filter(sport == "400m") %>%
-  mutate(athlete_name, points, under_50 = result < 50) %>%
-  select(athlete_name, points, competition, under_50) %>%
-  group_by(under_50) %>%
-  summarise(unique(under_50), mean_points = round(mean(points), 0)) %>%
-  select(under_50_sec_run = under_50, mean_points) %>%
+  mutate(under_50_sec_run = result < 50) %>%
+  group_by(under_50_sec_run) %>%
+  summarise(mean_points = round(mean(points), 0)) %>%
   arrange(desc(mean_points))
 
 avg_points_under_50sec_run

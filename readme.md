@@ -1,6 +1,6 @@
 # Dirty Data Project
 
-This is a project I completed as part of my Data Analytics class with CodeClan.
+This is the first project I completed as part of my Data Analytics class with CodeClan in week 4.
 
 To complete this Project I cleaned two quite messy datasets.
 I also analysed the output data according to the Project brief.
