@@ -1,0 +1,46 @@
+Gleb project feedback
+
+
+Task 1
+
+Positives 
+
+Data cleaning
+- Really well commented!
+- Nice concise pipeline in cleaning script
+
+Analysis
+- Nice writing around analysis
+- Overall really well done on task, all questions answered correctly and cleaning script is effective!
+
+
+Potential improvements
+
+Data cleaning
+- Need to library(tidyverse) in cleaning script, otherwise won’t work!
+- Could use ‘janitor::clean_names()’ instead of ‘rename_with(~ tolower(gsub(".", "_", .x, fixed = TRUE)))’
+
+Analysis
+- Don’t need to read in data for every question in analysis, read it into a variable in a second chunk and then use that variable or subsetted versions of that variable throughout.
+
+
+Task 4
+
+Positives 
+
+Data cleaning
+- Great folder structure and nice to see a README for the project!
+
+Analysis
+- Overall very good job! Nice writing around analysis and consistently well-commented throughout!
+- Nice use of inline code to print results in knitted version!
+
+Potential improvements
+
+Data cleaning
+- Same as task 1, could have used clean_names() instead of very extensive gsub code, could also use regex to remove some common patterns
+- You would want to pivot longer candy names instead of having ~100 columns of different candy names
+
+Analysis
+- When calculating the number of ratings, your code (just counting rows * cols) is including missing values so the real number of ratings is actually lower (could pivot_longer in cleaning script, then filter missing ratings and count that)
+- For your question 6, could have grouped by gender instead of writing separate code for each year (although both ways work) - same with country and year in the two following questions
